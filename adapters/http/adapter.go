@@ -1,21 +1,37 @@
 package http
 
 import (
-	"gitlab.com/zenport.io/go-assignment/engine"
+	"log"
+	"net/http"
+
+	"github.com/gorilla/mux"
+	"gitlab.com/upaphong/go-assignment/engine"
 )
 
-type HTTPAdapter struct{}
+type HTTPAdapter struct {
+	srv *http.Server
+}
 
 func (adapter *HTTPAdapter) Start() {
-	// todo: start to listen
+	go func() {
+		log.Println("server start on port 3000")
+		log.Fatal(adapter.srv.ListenAndServe())
+	}()
 }
 
 func (adapter *HTTPAdapter) Stop() {
-	// todo: shutdown server
+	if err := adapter.srv.Shutdown(nil); err != nil {
+		panic(err)
+	}
 }
 
 func NewHTTPAdapter(e engine.Engine) *HTTPAdapter {
-	// todo: init your http server and routes
+	r := mux.NewRouter()
+	RegisterRoutes(e, r)
 
-	return &HTTPAdapter{}
+	srv := &http.Server{
+		Handler: r,
+		Addr:    ":3000",
+	}
+	return &HTTPAdapter{srv: srv}
 }

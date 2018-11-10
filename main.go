@@ -5,9 +5,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"gitlab.com/zenport.io/go-assignment/adapters/http"
-	"gitlab.com/zenport.io/go-assignment/engine"
-	"gitlab.com/zenport.io/go-assignment/providers/database"
+	_ "github.com/lib/pq"
+	"gitlab.com/upaphong/go-assignment/adapters/http"
+	"gitlab.com/upaphong/go-assignment/engine"
+	"gitlab.com/upaphong/go-assignment/providers/database"
 )
 
 func main() {

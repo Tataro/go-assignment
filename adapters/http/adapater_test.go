@@ -1,6 +1,7 @@
 package http
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -10,20 +11,42 @@ import (
 
 	"encoding/json"
 
-	"gitlab.com/zenport.io/go-assignment/engine"
-	"gitlab.com/zenport.io/go-assignment/providers/database"
+	"github.com/gorilla/mux"
+	_ "github.com/lib/pq"
+	"gitlab.com/upaphong/go-assignment/engine"
+	"gitlab.com/upaphong/go-assignment/providers/database"
 )
 
 var (
-	router http.Handler
+	router *mux.Router
 )
+
+func ensureTableExists(p *database.Provider) {
+	const tableCreationQuery = `CREATE TABLE IF NOT EXISTS knights
+	(
+		id SERIAL,
+		name TEXT NOT NULL,
+		strength INTEGER NOT NULL,
+		weapon_power  INTEGER NOT NULL,
+		CONSTRAINT knights_pkey PRIMARY KEY (id)
+	)`
+	if _, err := p.DB.Exec(tableCreationQuery); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func clearTable(p *database.Provider) {
+	p.DB.Exec("TRUNCATE knights RESTART IDENTITY")
+}
 
 func TestMain(m *testing.M) {
 	provider := database.NewProvider()
-	// todo: init database (ex: create table, clear previous data, etc.)
+	ensureTableExists(provider)
+	clearTable(provider)
 	e := engine.NewEngine(provider)
 
-	router = nil // todo: add your router
+	router = mux.NewRouter()
+	RegisterRoutes(e, router)
 
 	code := m.Run()
 	provider.Close()

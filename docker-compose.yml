@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: goassignment
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pwd123
+    ports:
+      - "5432:5432"
+  app:
+    build: .
+    command: ["./wait-for-it.sh", "db:5432", "--", "go", "run", "main.go"]
+    volumes:
+      - .:/go/src/gitlab.com/upaphong/go-assignment
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    links:
+      - db

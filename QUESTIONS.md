@@ -9,10 +9,12 @@ There is no correct answer and none is mandatory, if you don't know just skip it
  - **What you will improve from your solution ?**
 1. configurations (db configs, server port, ...) should be in config file and load to project use viper lib.
 2. error handling look messy, need to make it looks more clean.
-3. validation query or params should be in middleware before pass to handler.
+3. validation query or params should be done in middleware before pass to handler.
 4. only repository testing need to test with real DB, the others should use mock.
 5. docker setup still need to improve.
 6. should assert database table (knights) when start the service.
+7. routes file should split by subdomain (for easy to read, otherwise it'll grow too long).
+8. still confuse on how to use postgres in docker for development.
 
  - **For you, what are the boundaries of a service inside a micro-service architecture ?**  
   a service must have high cohesion (enough information to nearly run standalone), low coupling (less dependency not involve too much services), and must do only one responsibility.
